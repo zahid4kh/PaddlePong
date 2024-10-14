@@ -11,9 +11,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import pong.clone.ui.theme.PongCloneTheme
 
@@ -32,13 +39,68 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Lol() {
-    Column(modifier = Modifier.fillMaxSize().border(3.dp,Color.White, shape = RoundedCornerShape(40.dp))){
-        Canvas(modifier = Modifier.fillMaxSize().background(Color.Black)){
+    val textMeasurer = rememberTextMeasurer()
+    var playerX by remember { mutableFloatStateOf(0f) }
+    var playerY by remember { mutableFloatStateOf(0f) }
+    var botX by remember { mutableFloatStateOf(0f) }
+    var botY by remember { mutableFloatStateOf(0f) }
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .border(3.dp, Color.White, shape = RoundedCornerShape(40.dp))){
+        Canvas(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)){
             val canvasWidth = size.width
             val canvasHeight = size.height
+
+            playerX = canvasWidth - 80
+            playerY = canvasHeight/2 - 170/2
+
+            botX = 40f
+            botY = canvasHeight/2 - 170/2
             val ballOffset = 72
-            println("Canvas size = $size")
-            drawCircle(Color.Green, 50f, center = Offset(canvasWidth-ballOffset, canvasHeight-ballOffset))
+            drawText(textMeasurer, "Canvas size: ${Pair(canvasWidth, canvasHeight)}", topLeft = Offset(canvasWidth/2.4f, canvasHeight-100))
+            drawCircle(Color.White, 50f, center = Offset(center.x, center.y))
+            drawRoundRect(color = Color.White, size = Size(40f,170f), topLeft = Offset(playerX, playerY))
+            drawRoundRect(color = Color.White, size = Size(40f,170f), topLeft = Offset(botX, botY))
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
