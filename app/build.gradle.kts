@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "pong.pong"
+    namespace = "pong.clone"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "pong.pong"
+        applicationId = "pong.clone"
         minSdk = 21
         targetSdk = 34
         versionCode = 1
