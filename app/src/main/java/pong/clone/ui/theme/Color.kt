@@ -1,4 +1,4 @@
-package pong.pong.ui.theme
+package pong.clone.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

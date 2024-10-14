@@ -1,4 +1,4 @@
-package pong.pong
+package pong.clone
 
 import org.junit.Test
 
