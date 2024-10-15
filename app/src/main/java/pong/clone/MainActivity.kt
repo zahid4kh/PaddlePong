@@ -3,7 +3,6 @@ package pong.clone
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,7 +28,7 @@ import pong.clone.ui.theme.PongCloneTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
         setContent {
             PongCloneTheme {
                 Lol()
@@ -66,10 +65,12 @@ fun Lol() {
 
     Box(modifier = Modifier
         .fillMaxSize()
-        .border(3.dp, Color.White, shape = RoundedCornerShape(40.dp))){
+        .border(3.dp, Color.White, shape = RoundedCornerShape(40.dp))
+    )
+    {
         Canvas(modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)){
+            .background(Color.DarkGray)){
             val canvasWidth = size.width
             val canvasHeight = size.height
 
@@ -78,13 +79,12 @@ fun Lol() {
 
             botX = 40f
             botY = canvasHeight/2 - 170/2
-            //val ballOffset = 72
             drawText(textMeasurer, "Canvas size: ${Pair(canvasWidth, canvasHeight)}", topLeft = Offset(canvasWidth/2.4f, canvasHeight-100))
 
             ballX += speedX
             ballY += speedY
-            if (ballX + ballRadius >= canvasWidth || ballX - ballRadius <= 0) {
-                speedX *= -1;
+            if (ballX + ballRadius >= canvasWidth || ballX - ballRadius <= botX) {
+                speedX *= -1
             }
 
             if (ballY + ballRadius >= canvasHeight || ballY - ballRadius <= 0){
@@ -92,9 +92,10 @@ fun Lol() {
             }
 
             drawCircle(Color.White, ballRadius, center = Offset(ballX, ballY))
-            println("Ball coordinates = ${Pair(ballX, ballY)}")
 
             drawRoundRect(color = Color.White, size = Size(40f,170f), topLeft = Offset(playerX, playerY))
+
+            botY = ballY - ballRadius
 
             drawRoundRect(color = Color.White, size = Size(40f,170f), topLeft = Offset(botX, botY))
         }
