@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,10 +25,13 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import pong.clone.ui.theme.PongCloneTheme
 
 class MainActivity : ComponentActivity() {
@@ -57,11 +61,14 @@ fun Lol() {
 
     val textMeasurer = rememberTextMeasurer()
     var playerX by remember { mutableFloatStateOf(0f) }
-    var playerY by remember { mutableFloatStateOf(0f) }
+    var playerY by remember { mutableFloatStateOf(120f) }
     var isDragging by remember { mutableStateOf(false) }
+    var playerScore by remember { mutableIntStateOf(0) }
+
 
     var botX by remember { mutableFloatStateOf(0f) }
     var botY by remember { mutableFloatStateOf(0f) }
+    var botScore by remember { mutableIntStateOf(0) }
 
     var ballX by remember { mutableFloatStateOf(screen.first.toFloat() / 2) }
     var ballY by remember { mutableFloatStateOf(screen.second.toFloat() / 2) }
@@ -76,7 +83,7 @@ fun Lol() {
     {
         Canvas(modifier = Modifier
             .fillMaxSize()
-            .background(Color.DarkGray)
+            .background(Color.Black)
             .pointerInput(Unit){
                 detectDragGestures(
                     onDragStart = {offset -> isDragging = true},
@@ -94,17 +101,30 @@ fun Lol() {
 
             botX = 40f
             botY = canvasHeight/2 - 170/2
-            drawText(textMeasurer, "Canvas size: ${Pair(canvasWidth, canvasHeight)}", topLeft = Offset(canvasWidth/2.4f, canvasHeight-100))
+            drawText(textMeasurer, "Drag the right paddle to move up and down", topLeft = Offset(canvasWidth/2.7f, canvasHeight-100))
 
             ballX += speedX
             ballY += speedY
-            if (ballX + ballRadius >= canvasWidth || ballX - ballRadius <= botX || ballX + ballRadius >= playerX) {
-                speedX *= -1
+
+            if (ballX - ballRadius*2 <= 0) {
+                speedX *= -1f
+                //playerScore += 1
+            }
+
+            if (ballX + ballRadius >= playerX ){
+                speedX *= -1f
+               // botScore += 1
             }
 
             if (ballY + ballRadius >= canvasHeight || ballY - ballRadius <= 0){
-                speedY *= -1f;
+                speedY *= -1f
             }
+
+            if (ballX + ballRadius >= playerX) botScore += 1
+            if (ballX - ballRadius <= 0) playerScore += 1
+
+
+            drawCircle(Color.DarkGray, radius = 320f, center = center)
 
             drawCircle(Color.White, ballRadius, center = Offset(ballX, ballY))
 
@@ -112,6 +132,19 @@ fun Lol() {
 
             botY = ballY - ballRadius
             drawRoundRect(color = Color.White, size = Size(40f,170f), topLeft = Offset(botX, botY), cornerRadius = CornerRadius(15f, 15f))
+
+            drawText(textMeasurer, botScore.toString(), topLeft = Offset(canvasWidth/4f, 100f),
+                style = TextStyle(
+                    Color.White,
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold))
+
+            drawText(textMeasurer, playerScore.toString(), topLeft = Offset(canvasWidth/2f + canvasWidth/4f, 100f),
+                style = TextStyle(
+                    Color.White,
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold))
+
         }
 
     }
