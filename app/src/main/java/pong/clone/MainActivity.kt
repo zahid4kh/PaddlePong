@@ -3,21 +3,26 @@ package pong.clone
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -28,7 +33,7 @@ import pong.clone.ui.theme.PongCloneTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //enableEdgeToEdge()
+        enableEdgeToEdge()
         setContent {
             PongCloneTheme {
                 Lol()
@@ -53,6 +58,7 @@ fun Lol() {
     val textMeasurer = rememberTextMeasurer()
     var playerX by remember { mutableFloatStateOf(0f) }
     var playerY by remember { mutableFloatStateOf(0f) }
+    var isDragging by remember { mutableStateOf(false) }
 
     var botX by remember { mutableFloatStateOf(0f) }
     var botY by remember { mutableFloatStateOf(0f) }
@@ -70,12 +76,21 @@ fun Lol() {
     {
         Canvas(modifier = Modifier
             .fillMaxSize()
-            .background(Color.DarkGray)){
+            .background(Color.DarkGray)
+            .pointerInput(Unit){
+                detectDragGestures(
+                    onDragStart = {offset -> isDragging = true},
+                    onDragEnd = {isDragging = false},
+                    onDrag = {change, dragAmount -> if (isDragging) playerY += dragAmount.y else playerY = (size.height/2 - 170/2).toFloat() }
+                )
+            }
+        )
+        {
             val canvasWidth = size.width
             val canvasHeight = size.height
 
             playerX = canvasWidth - 80
-            playerY = canvasHeight/2 - 170/2
+
 
             botX = 40f
             botY = canvasHeight/2 - 170/2
@@ -83,7 +98,7 @@ fun Lol() {
 
             ballX += speedX
             ballY += speedY
-            if (ballX + ballRadius >= canvasWidth || ballX - ballRadius <= botX) {
+            if (ballX + ballRadius >= canvasWidth || ballX - ballRadius <= botX || ballX + ballRadius >= playerX) {
                 speedX *= -1
             }
 
@@ -93,12 +108,12 @@ fun Lol() {
 
             drawCircle(Color.White, ballRadius, center = Offset(ballX, ballY))
 
-            drawRoundRect(color = Color.White, size = Size(40f,170f), topLeft = Offset(playerX, playerY))
+            drawRoundRect(color = Color.White, size = Size(40f,170f), topLeft = Offset(playerX, playerY), cornerRadius = CornerRadius(15f, 15f))
 
             botY = ballY - ballRadius
-
-            drawRoundRect(color = Color.White, size = Size(40f,170f), topLeft = Offset(botX, botY))
+            drawRoundRect(color = Color.White, size = Size(40f,170f), topLeft = Offset(botX, botY), cornerRadius = CornerRadius(15f, 15f))
         }
+
     }
 }
 
